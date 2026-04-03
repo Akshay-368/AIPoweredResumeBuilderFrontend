@@ -1,0 +1,46 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+  <div class="brand-row">
+    <button type="button" class="menu-btn" (click)="onToggleSidebar()" aria-label="Toggle sidebar">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="brand-copy" *ngIf="!collapsed">
+      <p class="brand-eyebrow">AI Suite</p>
+      <h2 class="brand-name">Resume Builder</h2>
+    </div>
+  </div>
+
+  <nav class="nav-list" aria-label="Dashboard navigation">
+    <a
+      *ngFor="let item of navItems"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+      class="nav-item"
+    >
+      <span class="nav-dot"></span>
+      <span *ngIf="!collapsed">{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <div class="nav-divider" *ngIf="secondaryNavItems.length > 0"></div>
+
+  <nav class="nav-list secondary-nav" aria-label="Additional dashboard navigation">
+    <a
+      *ngFor="let item of secondaryNavItems"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+      class="nav-item"
+    >
+      <span class="nav-dot"></span>
+      <span *ngIf="!collapsed">{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <button type="button" class="logout-btn" (click)="onLogout()">
+    <span class="nav-dot"></span>
+    <span *ngIf="!collapsed">Logout</span>
+  </button>
+</aside>

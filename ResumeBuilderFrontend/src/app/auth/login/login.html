@@ -1,0 +1,67 @@
+
+<!-- LEGACY LOGIN MARKUP COMMENTED OUT : kept for reference and rollback safety. -->
+<!-- <div class="login-form"> -->
+<!--     <div class="login-method"> -->
+<!--         <label> -->
+<!--             <input type="radio" name = "loginMethod" value="email" [(ngModel)]="loginMethod"> Email -->
+<!--         </label> -->
+<!--         <label> -->
+<!--         <input type="radio" name = "loginMethod" value="phone" [(ngModel)]="loginMethod"> Phone </label> -->
+<!--     </div> -->
+<!--     <input *ngIf="loginMethod==='email'" placeholder="Email" type="email" [(ngModel)]="email" name="email" required> -->
+<!--     <input *ngIf="loginMethod==='phone'" placeholder="Phone Number" type="tel" pattern="[0-9]{10}" [(ngModel)]="phone" name="phone" required> -->
+<!--     <input placeholder="Password" type="password" [(ngModel)]="password" name="password" required> -->
+<!--     <button [disabled]="!isValidLogin()">Login </button> -->
+<!-- </div> -->
+
+<!-- New login form: premium segmented chooser improves discoverability for email vs phone login. -->
+<div class="login-form">
+    <p class="section-title">Welcome Back</p>
+    <p class="section-subtitle">Choose a login method and continue to your dashboard.</p>
+
+    <!-- Button-based segmented control is easier to tap/click than tiny radios. -->
+    <div class="login-method" role="tablist" aria-label="Login method selection">
+        <button
+            type="button"
+            class="method-btn"
+            [class.active]="loginMethod === 'email'"
+            (click)="loginMethod = 'email'"
+        >
+            Email Address
+        </button>
+        <button
+            type="button"
+            class="method-btn"
+            [class.active]="loginMethod === 'phone'"
+            (click)="loginMethod = 'phone'"
+        >
+            Phone Number
+        </button>
+    </div>
+
+    <!-- Conditional inputs render only for the selected method. -->
+    <input
+        *ngIf="loginMethod === 'email'"
+        placeholder="name@example.com"
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        required
+    >
+
+    <input
+        *ngIf="loginMethod === 'phone'"
+        placeholder="10-digit phone number"
+        type="tel"
+        pattern="[0-9]{10}"
+        [(ngModel)]="phone"
+        name="phone"
+        required
+    >
+
+    <!-- Password is shared by both login methods. -->
+    <input placeholder="Password" type="password" [(ngModel)]="password" name="password" required>
+
+    <!-- Disabled state prevents invalid submissions. -->
+    <button [disabled]="!isValidLogin()" (click)="onLogin()">Login</button>
+</div>

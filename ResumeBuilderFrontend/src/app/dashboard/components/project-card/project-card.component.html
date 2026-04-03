@@ -1,0 +1,5 @@
+<article class="project-card" role="button" tabindex="0" (click)="openProject()" (keydown.enter)="openProject()">
+  <p class="project-type">{{ project.type }}</p>
+  <h3>{{ project.name }}</h3>
+  <p class="project-date">Last modified: {{ project.lastModifiedIso | date: 'medium' }}</p>
+</article>
