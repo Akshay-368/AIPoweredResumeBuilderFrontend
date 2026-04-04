@@ -1,0 +1,54 @@
+input{
+    
+    border:1px solid #cbd5e1;
+
+    width:100%;
+
+    padding:12px;
+
+    margin-bottom:15px;
+
+    border-radius:6px;
+}
+
+button{
+
+    background:#1e3a8a;
+
+    width:100%;
+
+    padding:12px;
+
+    color:white;
+
+    border:none;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+}
+
+.helper{
+
+    color:#64748b;
+    margin-top:15px;
+    font-size:14px;
+    text-align:center;
+
+}
+
+select{
+    border:1px solid #cbd5e1;
+    width:100%;
+    padding:12px;
+    margin-bottom:15px; /* space between select and register button */
+    border-radius:6px;
+}
+
+.instruction {
+    color: #64748b;/* Subtle greyi-ish color */
+    font-size: 12px; /* Small font size */
+    margin-top: 5px;
+    margin-bottom: 10px; /* space between instruction and select */
+}

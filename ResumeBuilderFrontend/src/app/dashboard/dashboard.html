@@ -1,0 +1,13 @@
+<div class="dashboard-shell">
+	<app-dashboard-sidebar
+		[navItems]="navItems"
+		[secondaryNavItems]="secondaryNavItems"
+		[collapsed]="isSidebarCollapsed"
+		(toggleSidebar)="toggleSidebar()"
+		(logout)="logout()"
+	></app-dashboard-sidebar>
+
+	<main class="workspace">
+		<router-outlet></router-outlet>
+	</main>
+</div>
