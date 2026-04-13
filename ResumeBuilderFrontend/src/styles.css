@@ -1,0 +1,212 @@
+/* Global theme variables */
+:root {
+  --primary-color: #0f766e;
+  --secondary-color: #e8f0ef;
+  --text-color: #102f32;
+  --background-color: #f8fafc;
+  --primary-color-hover: #0c5f58;
+  --primary-color-active: #0a504a;
+  --card: #ffffff;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.45s ease, color 0.45s ease;
+  position: relative;
+  overflow-x: hidden;
+}
+
+app-root {
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+body.default,
+body.light {
+  --primary-color: #0f766e;
+  --secondary-color: #eef5f4;
+  --text-color: #102f32;
+  --background-color: #f8fafc;
+  --primary-color-hover: #0c5f58;
+  --primary-color-active: #0a504a;
+  --card: #ffffff;
+}
+
+body.night {
+  --primary-color: #61d4a8;
+  --secondary-color: #1a2637;
+  --text-color: #d8fffa;
+  --background-color: #081321;
+  --primary-color-hover: #4cc097;
+  --primary-color-active: #3aa884;
+  --card: #102235;
+}
+
+body.aurora {
+  --primary-color: #89ffdb;
+  --secondary-color: #163446;
+  --text-color: #e6ffff;
+  --background-color: #0f2027;
+  --primary-color-hover: #6becc9;
+  --primary-color-active: #52d9b7;
+  --card: #1a2a3a;
+}
+
+/* Theme propagation for dashboard surfaces without editing dashboard component files */
+body .dashboard-shell {
+  transition: background 0.45s ease;
+}
+
+body.light .dashboard-shell,
+body.default .dashboard-shell {
+  background:
+    radial-gradient(circle at 10% 20%, rgba(15, 118, 110, 0.18), transparent 36%),
+    radial-gradient(circle at 90% 80%, rgba(11, 79, 74, 0.14), transparent 34%),
+    linear-gradient(140deg, #f7f4ec, #d5e0d8);
+}
+
+body.night .dashboard-shell {
+  background:
+    radial-gradient(circle at 14% 12%, rgba(109, 198, 255, 0.18), transparent 30%),
+    radial-gradient(circle at 82% 78%, rgba(104, 152, 255, 0.12), transparent 34%),
+    linear-gradient(155deg, rgba(8, 19, 33, 0.98), rgba(12, 27, 45, 0.94));
+}
+
+
+
+body.aurora .dashboard-shell {
+  background:
+    radial-gradient(ellipse at 14% 30%, rgba(85, 245, 207, 0.24), transparent 44%),
+    radial-gradient(ellipse at 82% 68%, rgba(96, 145, 255, 0.23), transparent 46%),
+    linear-gradient(132deg, #0d1f35, #15394f, #1e4f5e);
+   background-size: 180% 180%, 210% 210%, 200% 200%;
+  
+}
+
+body.aurora .dashboard-shell::before,
+body.aurora .dashboard-shell::after {
+  content: "";
+  position: fixed;
+  inset: -18%;
+  pointer-events: none;
+  z-index: 0;
+  transform-origin: center;
+}
+
+body.aurora .dashboard-shell::before {
+  background:
+    radial-gradient(ellipse at 22% 34%, rgba(115, 255, 218, 0.26), transparent 48%),
+    radial-gradient(ellipse at 70% 58%, rgba(103, 161, 255, 0.22), transparent 50%);
+  filter: blur(20px) saturate(120%);
+
+}
+
+body.aurora .dashboard-shell::after {
+  background:
+    conic-gradient(from 210deg at 50% 50%, rgba(90, 255, 211, 0.11), rgba(88, 132, 255, 0.12), rgba(90, 255, 211, 0.1));
+  filter: blur(34px);
+  opacity: 0.5;
+  
+}
+
+body.aurora .dashboard-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+
+
+
+body.night .sidebar,
+body.aurora .sidebar,
+body.night .feature-page,
+body.aurora .feature-page,
+body.night .ai-placeholder,
+body.aurora .ai-placeholder {
+  color: var(--text-color);
+}
+
+body.night .sidebar,
+body.aurora .sidebar {
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  border-right-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
+}
+
+body.night .ai-placeholder,
+body.aurora .ai-placeholder {
+  background: color-mix(in srgb, var(--card) 76%, transparent);
+  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+}
+
+body.night .feature-page header h1,
+body.night .feature-page header p,
+body.night .feature-page h2,
+body.aurora .feature-page header h1,
+body.aurora .feature-page header p,
+body.aurora .feature-page h2 {
+  color: var(--text-color);
+}
+
+/* Night mode stars: one layer drifts, one layer twinkles. */
+body.night::before,
+body.night::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+body.night::before {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.88) 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(185, 221, 255, 0.7) 1px, transparent 1.9px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.72) 1px, transparent 2px);
+  background-size: 220px 220px, 300px 300px, 420px 420px;
+  background-position: 0 0, 40px 90px, 120px 30px;
+  opacity: 0.16;
+  animation: starsDriftX 140s linear infinite;
+}
+
+body.night::after {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0.8px, transparent 1.6px);
+  background-size: 140px 140px;
+  background-position: 20px 60px;
+  opacity: 0.12;
+  animation: starsTwinkle 6.5s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+
+@keyframes starsDriftX {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-90px, 0, 0);
+  }
+}
+
+@keyframes starsTwinkle {
+  0% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.14;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+
+

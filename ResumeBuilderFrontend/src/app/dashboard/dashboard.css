@@ -1,0 +1,26 @@
+:host {
+	display: block;
+	min-height: 100vh;
+	font-family: Georgia, 'Times New Roman', serif;
+}
+
+.dashboard-shell {
+	min-height: 100vh;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	background:
+		radial-gradient(circle at 10% 20%, rgba(15, 118, 110, 0.18), transparent 36%),
+		radial-gradient(circle at 90% 80%, rgba(11, 79, 74, 0.14), transparent 34%),
+		linear-gradient(140deg, #f7f4ec, #d5e0d8);
+}
+
+.workspace {
+	min-height: 100vh;
+	padding: clamp(16px, 2.5vw, 28px);
+}
+
+@media (max-width: 900px) {
+	.dashboard-shell {
+		grid-template-columns: 88px 1fr;
+	}
+}

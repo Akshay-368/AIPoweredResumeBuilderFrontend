@@ -1,0 +1,23 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onClose()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h2>Create {{ selectedType }} Project</h2>
+    <p>Name your project to continue.</p>
+
+    <label for="project-name">Project name</label>
+    <input
+      id="project-name"
+      name="projectName"
+      type="text"
+      maxlength="60"
+      [(ngModel)]="projectName"
+      placeholder="e.g. Backend Engineer Resume"
+    />
+
+    <div class="actions">
+      <button type="button" class="ghost" (click)="onClose()">Cancel</button>
+      <button type="button" class="primary" [disabled]="!projectName.trim()" (click)="onSubmit()">
+        Create Project
+      </button>
+    </div>
+  </div>
+</div>

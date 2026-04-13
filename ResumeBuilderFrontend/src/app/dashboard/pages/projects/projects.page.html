@@ -1,0 +1,44 @@
+<section class="projects-page">
+  <header class="page-header">
+    <h1>Projects</h1>
+    <p>Manage ATS checks, resume drafts, and template explorations from one workspace.</p>
+  </header>
+
+  <section class="create-grid" aria-label="Create project">
+    <button type="button" class="create-card" (click)="openCreateProjectModal('ATS')">
+      <h3>New ATS Project</h3>
+      <p>Analyze job-match readiness with AI-powered score insights.</p>
+    </button>
+    <button type="button" class="create-card" (click)="openCreateProjectModal('Resume')">
+      <h3>New Resume Project</h3>
+      <p>Build, refine, and optimize your resume narrative quickly.</p>
+    </button>
+    <button type="button" class="create-card" (click)="openCreateProjectModal('Template')">
+      <h3>New Template Project</h3>
+      <p>Explore visual formats designed for modern recruiters.</p>
+    </button>
+  </section>
+
+  <section class="projects-grid" *ngIf="projects().length > 0; else emptyState">
+    <app-project-card
+      *ngFor="let project of projects(); trackBy: trackByProjectId"
+      [project]="project"
+      (open)="openProject($event)"
+      (delete)="deleteProject($event)"
+    ></app-project-card>
+  </section>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <h3>No projects yet</h3>
+      <p>Create your first ATS, Resume, or Template project to get started.</p>
+    </div>
+  </ng-template>
+</section>
+
+<app-project-modal
+  [isOpen]="isModalOpen"
+  [selectedType]="selectedType"
+  (close)="closeCreateProjectModal()"
+  (submitProject)="onCreateProject($event)"
+></app-project-modal>

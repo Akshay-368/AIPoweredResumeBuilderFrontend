@@ -26,3 +26,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.env 
+node_modules/ 
+dist/ 
+build/ 
+*.log 
+*.tmp 
+*.cache 
+bin/ 
+obj/ 
+*.dll 
+*.exe 

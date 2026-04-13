@@ -1,0 +1,216 @@
+/* LEGACY AUTH CSS COMMENTED OUT PER REQUEST: kept for reference and rollback safety.
+This is the css to define the layout and design of the authentication page.
+and this in itself will contain the login and registration forms. The css will be used to style the forms and make them look good.
+And basically auth controls the page layout and login and registrtion forms their own appearance on the page inside auth itself.
+THis css mainly concerns with:
+left panel,
+right panel,
+background,
+grid/flex layout,
+switching between login and registration forms,
+and spacing and alignment of the elements on the page.
+
+.auth-page {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.left-panel{
+    flex : 1;
+    background:linear-gradient(to right , #020617 , #59c8ff) ;
+    color: white;
+    padding : 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content : center ;
+    align-items: center;
+    backdrop-filter:  blur(10px);
+}
+.right-panel{
+    flex :1 ;
+    display: flex;
+    flex-direction: column;
+    justify-content : center ;
+    align-items: center;
+    padding : 70px;
+    background:linear-gradient(to left , #020617 , #59c8ff) ;
+    color: white;
+}
+
+.auth-form{
+    width:400px;
+    background:white;
+    padding:35px;
+    border-radius:12px;
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+}
+
+.tabs{
+    display:flex;
+    margin-bottom:25px;
+    border-bottom:1px solid #e2e8f0;
+}
+
+.tabs button{
+    flex:1;
+    padding:12px;
+    border:none;
+    background:none;
+    cursor:pointer;
+    font-weight:600;
+    color:#64748b;
+}
+
+.tabs button.active{
+    color:#1e3a8a;
+    border-bottom:3px solid #1e3a8a;
+}
+
+.features{
+    margin-top:30px;
+    line-height:2;
+    opacity:.9;
+}
+
+.tagline{
+    margin-top:20px;
+    font-size:18px;
+    opacity:.85;
+}
+*/
+
+/* Premium auth shell styling: introduces layered gradients and glassmorphism depth. */
+.auth-page {
+    --auth-bg-1: #f7f4ec;
+    --auth-bg-2: #d5e0d8;
+    --auth-ink: #182022;
+    --auth-muted: #5f6b6f;
+    --auth-accent: #0f766e;
+    --auth-accent-2: #0b4f4a;
+
+    min-height: 100vh;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    font-family: Georgia, 'Times New Roman', serif;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(15, 118, 110, 0.22), transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(11, 79, 74, 0.2), transparent 38%),
+        linear-gradient(140deg, var(--auth-bg-1), var(--auth-bg-2));
+    color: var(--auth-ink);
+}
+
+.left-panel {
+    padding: clamp(28px, 6vw, 72px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+}
+
+.eyebrow {
+    display: inline-block;
+    margin: 0;
+    width: fit-content;
+    padding: 8px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.74rem;
+    color: #08463f;
+    background: rgba(15, 118, 110, 0.14);
+}
+
+.title {
+    margin: 0;
+    font-size: clamp(2rem, 4.8vw, 3.3rem);
+    line-height: 1.08;
+    color: #102426;
+}
+
+.tagline {
+    margin: 0;
+    max-width: 56ch;
+    color: var(--auth-muted);
+    font-size: clamp(1rem, 1.8vw, 1.12rem);
+}
+
+.feature-grid {
+    margin-top: 8px;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+}
+
+.feature-item {
+    padding: 12px 14px;
+    border-radius: 12px;
+    color: #0f3f3a;
+    background: rgba(255, 255, 255, 0.44);
+    border: 1px solid rgba(15, 118, 110, 0.24);
+    backdrop-filter: blur(4px);
+}
+
+.right-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(20px, 5vw, 64px);
+}
+
+.auth-form {
+    width: min(100%, 480px);
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    padding: clamp(18px, 3.2vw, 32px);
+    box-shadow: 0 20px 50px rgba(16, 37, 39, 0.15);
+    backdrop-filter: blur(16px);
+}
+
+.tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 22px;
+    padding: 6px;
+    border-radius: 12px;
+    background: rgba(13, 70, 64, 0.08);
+}
+
+.tabs button {
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #355556;
+    background: transparent;
+    transition: all 0.22s ease;
+}
+
+.tabs button:hover {
+    background: rgba(13, 70, 64, 0.12);
+}
+
+.tabs button.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--auth-accent), var(--auth-accent-2));
+    box-shadow: 0 8px 20px rgba(11, 79, 74, 0.28);
+}
+
+@media (max-width: 980px) {
+    .auth-page {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .right-panel {
+        padding-top: 0;
+    }
+}

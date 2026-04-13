@@ -1,0 +1,32 @@
+.card{
+    width: 150px;
+    height: 100px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: auto;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(15, 118, 110, 0.3);
+}
+
+/* Theme specific styles for preview basically */
+
+.card.light{
+    background-color: #f8fafc;
+    color: #102f32;
+}
+
+.card.night{
+    background-color: #0b1a2b;
+    color : #d8fffa;
+}
+
+.card.aurora{
+    background: linear-gradient(120deg , #1a2980 , #26d0ce);
+    color: #f8f8f8;
+}

@@ -1,0 +1,92 @@
+<form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm)">
+<input [(ngModel)]="fullName" placeholder="Full Name"  name = "FullName" type = "text"  pattern="[A-Za-z\s]+" required >
+
+<input [(ngModel)]="email" placeholder="Email" name = "Email"  type="email" required>
+
+<input [(ngModel)]="phoneNumber" placeholder="Contact Number(exactly 10 digits only)" name = "PhoneNumber" type="tel" pattern="[0-9]{10}" required>
+
+<input [(ngModel)] = "password" title="Must contain at least one number , one Uppercase letter , one special character  , one lowercase letter and minimum 8 characters in total" name = "Password" placeholder="Enter Password" type = "password" (ngModelChange) = "validatePassword()" required>
+<p class = "instruction"> Must contain at least one number , one Uppercase letter , one special character  , one lowercase letter and minimum 8 characters in total</p>
+<div class="password-rules">
+  <p [style.color]="passwordRules.hasUpper ? 'green' : 'red'">
+    ✔ Uppercase letter
+  </p>
+  <p [style.color]="passwordRules.hasLower ? 'green' : 'red'">
+    ✔ Lowercase letter
+  </p>
+  <p [style.color]="passwordRules.hasNumber ? 'green' : 'red'">
+    ✔ Number
+  </p>
+  <p [style.color]="passwordRules.hasSpecial ? 'green' : 'red'">
+    ✔ Special character (@$!%*?&)
+  </p>
+  <p [style.color]="passwordRules.hasMinLength ? 'green' : 'red'">
+    ✔ Minimum 8 characters
+  </p>
+</div>
+<!-- LEGACY FIELD COMMENTED OUT PER REQUEST: immediate check ran on each input event without delay. -->
+<!-- <input [(ngModel)] = "confirmPassword" (input)="checkPasswordMatch()" name = "ConfirmPassword" placeholder="Confirm Password" type = "password" pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" required> -->
+
+<!-- New confirm-password field: starts delayed validation only after user focuses and types. -->
+<input
+  [(ngModel)]="confirmPassword"
+  (focus)="onConfirmPasswordFocus()"
+  (ngModelChange)="onConfirmPasswordChange()"
+  name="ConfirmPassword"
+  placeholder="Confirm Password"
+  type="password"
+  (ngModelChange) = "validatePassword()"
+  required
+>
+
+<!-- LEGACY STATUS MESSAGE COMMENTED OUT : this showed early during startup renders of the page itself. -->
+<!-- <p *ngIf = "checkPasswordMatch() === false" style = "color : red ; font-size : 12px ; margin-top : 5px">
+  Passwords do not match. Please try again.
+</p> -->
+<p *ngIf="confirmPassword">
+  <span *ngIf="checkPasswordMatch()" style="color: green">
+    ✔ Passwords match
+  </span>
+  <span *ngIf="!checkPasswordMatch()" style="color: red">
+    ❌ Passwords do not match
+  </span>
+</p>
+<!-- Delayed validation result: appears after at least 3s idle time from confirm-password typing. 
+<p *ngIf="showPasswordMatchStatus && checkPasswordMatch() === false" style = "color : red ; font-size : 12px ; margin-top : 5px">
+  Passwords do not match. Please try again.
+</p>
+<p *ngIf="showPasswordMatchStatus && checkPasswordMatch() === true" style = "color: green ; font-size : 12px ; margin-top : 5px">Passwords match.</p>
+-->
+
+<p class = "instruction"> Please select an account role. (Also Note : By default it is set to User)</p>
+<select  [(ngModel)] = "selectedRole" name = "Role" >
+    <option value = "" disabled  >Select Role </option>
+    <option value="admin">Admin</option>
+    <option value="user">User</option>
+</select>
+<!-- ngModel works as two way binding , the way of angular to bind the data (element's value) with a property in component's class
+and it only works if the tag has a value property which user can change otherwise it will have nothingto bind to-->
+<div></div> <!-- Empty div for spacing between select and register button-->
+<!-- Conditional field -->
+<div *ngIf = "selectedRole === 'admin'">
+  <input [(ngModel)]="adminSecretKey" name="AdminSecretKey" type = "password" placeholder = "Admin Secret Key" required>
+    <!-- To be added ngModeltwo way binding later on when i getto backend .-->
+</div>
+
+<!-- Debugging information 
+<p>Form valid: {{ registerForm.valid }}</p>
+<p>Password match: {{ checkPasswordMatch() }}</p>
+<p>FullName valid: {{ registerForm.controls['FullName']?.valid }}</p>
+<p>Email valid: {{ registerForm.controls['Email']?.valid }}</p>
+<p>Phone valid: {{ registerForm.controls['PhoneNumber']?.valid }}</p>
+<p>Password valid: {{ registerForm.controls['Password']?.valid }}</p>
+<p>Confirm valid: {{ registerForm.controls['ConfirmPassword']?.valid }}</p>
+<p>Role valid: {{ registerForm.controls['Role']?.valid }}</p>
+-->
+<p *ngIf="errorMessage" style="color: #c92a2a; font-size: 12px; margin-top: 6px;">{{ errorMessage }}</p>
+<p *ngIf="successMessage" style="color: #2f9e44; font-size: 12px; margin-top: 6px;">{{ successMessage }}</p>
+
+<button type="submit" [disabled]="registerForm.invalid || !checkPasswordMatch() || !passwordValid || isSubmitting">
+  {{ isSubmitting ? 'Creating account...' : 'Register' }}
+</button>
+</form>
