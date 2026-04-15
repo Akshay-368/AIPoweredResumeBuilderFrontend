@@ -14,6 +14,11 @@ const app = express();
 const angularApp = new AngularNodeAppEngine();
 const gatewayTarget = process.env['GATEWAY_URL'] || 'http://localhost:5290';
 
+// Render health probe endpoint.
+app.get('/healthz', (_req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 /**
  * Proxy API traffic through Gateway so frontend never calls downstream services directly.
  */
