@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install dependencies first for better layer caching
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # Copy source and build the Angular SSR app
 COPY . .
@@ -19,7 +19,7 @@ ENV NODE_ENV=production
 
 # Install only production dependencies
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 
 # Copy compiled SSR output
 COPY --from=build /app/dist ./dist
