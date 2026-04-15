@@ -1,0 +1,212 @@
+<section class="feature-page">
+  <header class="page-header">
+    <div>
+      <h1>Account Settings</h1>
+      <p>Manage project lifecycle history, resume defaults, and security actions.</p>
+    </div>
+    <div class="user-id-chip" *ngIf="currentUserId !== null">
+      User ID: {{ currentUserId }}
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="card-header">
+      <h2>Project History</h2>
+      <div class="filter-group">
+        <button type="button" [class.active]="historyFilter === 'all'" (click)="onFilterChange('all')">All</button>
+        <button type="button" [class.active]="historyFilter === 'active'" (click)="onFilterChange('active')">Active</button>
+        <button type="button" [class.active]="historyFilter === 'deleted'" (click)="onFilterChange('deleted')">Deleted</button>
+      </div>
+    </div>
+
+    <p class="status" *ngIf="historyMessage">{{ historyMessage }}</p>
+
+    <div class="table-wrap" *ngIf="filteredHistory.length > 0; else noHistory">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th>Lifecycle</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let project of filteredHistory">
+            <td>{{ project.name }}</td>
+            <td>{{ project.type }}</td>
+            <td>{{ project.status }}</td>
+            <td>{{ project.updatedAt | date: 'medium' }}</td>
+            <td>
+              <span class="pill" [class.deleted]="project.isDeleted">{{ project.isDeleted ? 'Deleted' : 'Active' }}</span>
+            </td>
+            <td class="actions">
+              <button type="button" class="secondary" *ngIf="project.isDeleted" (click)="restoreProject(project.projectId)">Restore</button>
+              <button type="button" class="danger" (click)="permanentDeleteProject(project.projectId)">Permanent Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #noHistory>
+      <div class="empty">No projects available for this filter.</div>
+    </ng-template>
+  </section>
+
+  <section class="card">
+    <h2>Resume Library</h2>
+    <p class="status" *ngIf="resumeLibraryMessage">{{ resumeLibraryMessage }}</p>
+
+    <div class="table-wrap" *ngIf="resumeLibrary.length > 0; else noResumes">
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Project</th>
+            <th>Template/File</th>
+            <th>Updated</th>
+            <th>Default</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let resume of resumeLibrary">
+            <td>{{ resume.resumeType }}</td>
+            <td>{{ resume.projectName }}</td>
+            <td>{{ resume.templateId || resume.fileName || resume.sourceType || '-' }}</td>
+            <td>{{ resume.updatedAt | date: 'medium' }}</td>
+            <td>
+              <span class="pill" [class.default]="resume.resumeId === defaultResumeId">
+                {{ resume.resumeId === defaultResumeId ? 'Default' : 'Not Default' }}
+              </span>
+            </td>
+            <td class="actions">
+              <button type="button" class="secondary" [disabled]="resume.resumeId === defaultResumeId" (click)="setDefaultResume(resume.resumeId)">
+                Set Default
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #noResumes>
+      <div class="empty">No resumes found in your library yet.</div>
+    </ng-template>
+  </section>
+
+  <section class="card">
+    <h2>Phone Number</h2>
+    <p class="hint">Your account phone number is used for login and must always be exactly 10 digits.</p>
+
+    <div class="profile-meta" *ngIf="accountEmail || accountFullName">
+      <p><strong>Name:</strong> {{ accountFullName || '-' }}</p>
+      <p><strong>Email:</strong> {{ accountEmail || '-' }}</p>
+      <p><strong>Role:</strong> {{ accountRole || '-' }}</p>
+      <p><strong>Provider:</strong> {{ accountProvider || '-' }}</p>
+    </div>
+
+    <label>Current Phone Number</label>
+    <input type="text" [value]="currentPhoneNumber" readonly />
+
+    <label>Update Phone Number</label>
+    <input
+      type="tel"
+      maxlength="10"
+      pattern="[0-9]{10}"
+      [(ngModel)]="newPhoneNumber"
+      placeholder="Enter exactly 10 digits"
+    />
+
+    <div class="row-actions">
+      <button type="button" class="primary" [disabled]="isPhoneSubmitting" (click)="updatePhoneNumber()">
+        {{ isPhoneSubmitting ? 'Updating...' : 'Update Phone Number' }}
+      </button>
+    </div>
+
+    <p class="status" *ngIf="phoneMessage">{{ phoneMessage }}</p>
+  </section>
+
+  <section class="grid-two">
+    <article class="card security-card">
+      <h2>Forgot Password (OTP)</h2>
+      <p class="hint">Request OTP, verify it, and reset your password.</p>
+
+      <label>Email</label>
+      <input type="email" [(ngModel)]="forgotEmail" placeholder="you@example.com" />
+
+      <div class="row-actions">
+        <button type="button" class="secondary" (click)="requestForgotOtp()">Request OTP</button>
+      </div>
+
+      <div *ngIf="forgotOtpRequested" class="otp-block">
+        <p class="otp-timer">OTP expires in: {{ forgotOtpCountdownText || '10:00' }}</p>
+
+        <label>OTP</label>
+        <input type="text" maxlength="6" [(ngModel)]="forgotOtp" placeholder="Enter OTP" />
+
+        <div class="row-actions">
+          <button type="button" class="secondary" (click)="verifyForgotOtp()">Verify OTP</button>
+        </div>
+
+        <div class="otp-block" *ngIf="forgotOtpVerified">
+          <label>New Password</label>
+          <input
+            type="password"
+            [(ngModel)]="forgotNewPassword"
+            (ngModelChange)="validateForgotPassword()"
+            placeholder="Enter new password"
+          />
+
+          <div class="password-rules">
+            <p [style.color]="forgotPasswordRules.hasUpper ? 'green' : 'red'">✔ Uppercase letter</p>
+            <p [style.color]="forgotPasswordRules.hasLower ? 'green' : 'red'">✔ Lowercase letter</p>
+            <p [style.color]="forgotPasswordRules.hasNumber ? 'green' : 'red'">✔ Number</p>
+            <p [style.color]="forgotPasswordRules.hasSpecial ? 'green' : 'red'">✔ Special character (@$!%*?&)</p>
+            <p [style.color]="forgotPasswordRules.hasMinLength ? 'green' : 'red'">✔ Minimum 8 characters</p>
+          </div>
+
+          <label>Confirm Password</label>
+          <input type="password" [(ngModel)]="forgotConfirmPassword" placeholder="Confirm new password" />
+
+          <p *ngIf="forgotConfirmPassword">
+            <span *ngIf="forgotNewPassword === forgotConfirmPassword" style="color: green">✔ Passwords match</span>
+            <span *ngIf="forgotNewPassword !== forgotConfirmPassword" style="color: red">❌ Passwords do not match</span>
+          </p>
+
+          <button type="button" class="primary" (click)="resetForgotPassword()">Reset Password</button>
+        </div>
+      </div>
+
+      <p class="status" *ngIf="forgotMessage">{{ forgotMessage }}</p>
+    </article>
+
+    <article class="card security-card danger-zone">
+      <h2>Delete Account (Password + OTP)</h2>
+      <p class="hint">This action is irreversible. All owned data will be permanently deleted.</p>
+
+      <label>Password</label>
+      <input type="password" [(ngModel)]="deletePassword" placeholder="Enter account password" />
+
+      <div class="row-actions">
+        <button type="button" class="secondary" (click)="requestDeleteAccountOtp()">Request Delete OTP</button>
+      </div>
+
+      <div *ngIf="deleteOtpRequested" class="otp-block">
+        <p class="otp-timer">Delete OTP expires in: {{ deleteOtpCountdownText || '10:00' }}</p>
+
+        <label>OTP</label>
+        <input type="text" maxlength="6" [(ngModel)]="deleteOtp" placeholder="Enter delete OTP" />
+
+        <button type="button" class="danger" [disabled]="isDeleting" (click)="confirmDeleteAccount()">
+          {{ isDeleting ? 'Deleting...' : 'Confirm Permanent Delete' }}
+        </button>
+      </div>
+
+      <p class="status" *ngIf="deleteMessage">{{ deleteMessage }}</p>
+    </article>
+  </section>
+</section>

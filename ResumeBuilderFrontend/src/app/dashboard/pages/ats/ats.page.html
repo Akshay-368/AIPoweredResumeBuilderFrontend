@@ -1,0 +1,235 @@
+<section class="ats-page">
+  <header class="page-header">
+    <h1>ATS Console Flow</h1>
+    <p>Configure your ATS project, provide inputs, and preview analysis output.</p>
+  </header>
+
+  <ol class="stepper" aria-label="ATS wizard steps">
+    <li
+      *ngFor="let label of stepLabels; let index = index"
+      class="step-item"
+      [class.active]="isStepActive(index + 1)"
+      [class.completed]="isStepCompleted(index + 1)"
+    >
+      <span class="step-index">{{ index + 1 }}</span>
+      <span class="step-label">{{ label }}</span>
+    </li>
+  </ol>
+
+  <section class="wizard-card" [formGroup]="wizardForm">
+    <div class="slides-window">
+      <div class="slides-track" [style.transform]="'translateX(-' + (currentStep - 1) * 25 + '%)'">
+        <article class="wizard-step" aria-label="Project naming">
+          <h2>Step 1: Project Naming</h2>
+          <p *ngIf="!isExistingProjectMode">Name this ATS analysis project before continuing.</p>
+          <p *ngIf="isExistingProjectMode">Existing project detected. Project naming is locked for resumed workflows.</p>
+
+          <label for="projectName">Project Name</label>
+          <input id="projectName" type="text" formControlName="projectName" placeholder="e.g. Backend SWE ATS Review" [readonly]="isExistingProjectMode" />
+          <small class="error" *ngIf="wizardForm.controls.projectName.touched && !canProceedFromStep(1)">
+            Project name is required.
+          </small>
+        </article>
+
+        <article class="wizard-step" aria-label="Resume input">
+          <h2>Step 2: Resume Upload / Input</h2>
+          <p>Upload your resume or paste resume text if upload is not possible.</p>
+          <small class="hint" *ngIf="hasLockedResumeArtifact">Resume artifact already exists for this project. Editing is locked.</small>
+
+          <label class="toggle" *ngIf="!hasLockedResumeArtifact">
+            <input
+              type="checkbox"
+              [checked]="useDefaultResume"
+              (change)="onUseDefaultResumeToggle($event)"
+              [disabled]="!defaultResumeAvailable"
+            />
+            <span>Use my default resume</span>
+          </label>
+          <small class="hint" *ngIf="!defaultResumeAvailable">Default resume is not configured. Set one in Account Settings to use this shortcut.</small>
+          <small class="hint" *ngIf="defaultResumeMessage">{{ defaultResumeMessage }}</small>
+
+          <div class="upload-box">
+            <button type="button" class="secondary" (click)="openResumeFilePicker()" [disabled]="hasLockedResumeArtifact">Upload Resume</button>
+            <input
+              #resumeFileInput
+              type="file"
+              accept=".pdf,.docx"
+              (change)="onResumeFileChange($event)"
+              [disabled]="hasLockedResumeArtifact"
+              hidden
+            />
+            <span *ngIf="resumeFileName" class="file-name">Selected: {{ resumeFileName }}</span>
+            <small class="error" *ngIf="resumeFileError">{{ resumeFileError }}</small>
+            <small class="hint" *ngIf="resumeParsing">Parsing resume file through secured parser service...</small>
+            <small class="error" *ngIf="resumeParsingError">{{ resumeParsingError }}</small>
+
+            <div class="parser-response-panel" *ngIf="hasParserResponse()" [class.success]="parseResultState === 'success'" [class.error-state]="parseResultState === 'error'">
+              <div class="parser-response-head">
+                <p class="status-line">
+                  Parser Result:
+                  <strong>{{ parseResultState === 'success' ? 'Success' : 'Failed' }}</strong>
+                  <span *ngIf="parserResponseStatus !== null">(Status {{ parserResponseStatus }})</span>
+                </p>
+
+                <button type="button" class="response-toggle" (click)="toggleParserResponse()">
+                  {{ isParserResponseExpanded ? 'Hide Parser Response' : 'Show Parser Response' }}
+                </button>
+              </div>
+
+              <pre class="response-content" *ngIf="isParserResponseExpanded">{{ parsedResumeResponse }}</pre>
+            </div>
+          </div>
+
+          <label for="resumeText">Alternative: Paste Resume Content</label>
+          <textarea
+            id="resumeText"
+            rows="8"
+            formControlName="resumeText"
+            (blur)="onResumeTextBlur()"
+            placeholder="Paste your resume text here if file upload fails..."
+            [readonly]="hasLockedResumeArtifact"
+          ></textarea>
+          <small class="hint">You can continue with either a valid file upload or text input.</small>
+          <small class="error" *ngIf="wizardForm.controls.resumeText.touched && !canProceedFromStep(2)">
+            Add a valid resume file or paste resume content to continue.
+          </small>
+        </article>
+
+        <article class="wizard-step" aria-label="Job description input">
+          <h2>Step 3: Job Description / Role Selection</h2>
+          <p>Choose role context and provide a job description source.</p>
+          <small class="hint" *ngIf="hasLockedJdArtifact">JD artifact already exists for this project. Editing is locked.</small>
+
+          <label for="jobRole">Job Role</label>
+          <select id="jobRole" formControlName="jobRole" [disabled]="hasLockedJdArtifact">
+            <option value="" disabled>Select a role</option>
+            <option *ngFor="let role of jobRoles" [value]="role">{{ role }}</option>
+          </select>
+
+          <div class="other-role" *ngIf="isOtherRoleSelected">
+            <label for="customRole">Custom Role</label>
+            <input id="customRole" type="text" formControlName="customRole" placeholder="Type your role" [readonly]="hasLockedJdArtifact" />
+            <small class="error" *ngIf="wizardForm.controls.customRole.touched && !wizardForm.controls.customRole.value?.trim()">
+              Custom role is required when Other is selected.
+            </small>
+          </div>
+
+          <div class="upload-box">
+            <button type="button" class="secondary" (click)="openJobDescriptionFilePicker()" [disabled]="hasLockedJdArtifact">Upload Job Description</button>
+            <input #jdFileInput type="file" accept=".pdf,.docx" (change)="onJobDescriptionFileChange($event)" [disabled]="hasLockedJdArtifact" hidden />
+            <span *ngIf="jobDescriptionFileName" class="file-name">Selected: {{ jobDescriptionFileName }}</span>
+            <small class="error" *ngIf="jobDescriptionFileError">{{ jobDescriptionFileError }}</small>
+          </div>
+
+          <label for="jobDescriptionText">Alternative: Paste Job Description</label>
+          <textarea
+            id="jobDescriptionText"
+            rows="8"
+            formControlName="jobDescriptionText"
+            (blur)="onJobDescriptionTextBlur()"
+            placeholder="Paste job description text here..."
+            [readonly]="hasLockedJdArtifact"
+          ></textarea>
+          <small class="hint">Paste text or upload a file. Parsed JSON will appear below either way.</small>
+
+          <div
+            class="parser-response-panel"
+            *ngIf="hasJdParserResponse()"
+            [class.success]="jdParsingState === 'success'"
+            [class.error-state]="jdParsingState === 'error'"
+          >
+            <div class="parser-response-head">
+              <p class="status-line">
+                JD Parser Result:
+                <strong>{{ jdParsingState === 'success' ? 'Success' : 'Failed' }}</strong>
+                <span *ngIf="jdParserResponseStatus !== null">(Status {{ jdParserResponseStatus }})</span>
+              </p>
+
+              <button type="button" class="response-toggle" (click)="toggleJdParserResponse()">
+                {{ isJdResponseExpanded ? 'Hide Parser Response' : 'Show Parser Response' }}
+              </button>
+            </div>
+
+            <pre class="response-content" *ngIf="isJdResponseExpanded">{{ parsedJdResponse }}</pre>
+          </div>
+
+          <small class="error" *ngIf="wizardForm.controls.jobDescriptionText.touched && !canProceedFromStep(3)">
+            Complete role selection and add a valid job description source to continue.
+          </small>
+        </article>
+
+        <article class="wizard-step console-step" aria-label="ATS results console">
+          <h2>Step 4: AI ATS Console</h2>
+          <p>Real-time ATS scoring analysis and recommendations.</p>
+
+          <div class="console">
+            <div class="console-header">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <strong>ats-console.log</strong>
+            </div>
+
+            <div class="console-body">
+              <!-- Loading state -->
+              <ng-container *ngIf="atsScoringError">
+                <p class="error-line"><span>ERROR:</span> {{ atsScoringError }}</p>
+                <button type="button" class="retry-btn" (click)="retryAtsScoring()" [disabled]="atsScoringError.length === 0">Retry Analysis</button>
+              </ng-container>
+
+              <!-- Success state with results -->
+              <ng-container *ngIf="atsScoreResult && !atsScoringError">
+                <p><span>Overall ATS Score:</span> <strong class="score-highlight">{{ atsScoreResult.overallScore }}/100</strong></p>
+                <p><span>Keyword Match Score:</span> {{ atsScoreResult.keywordMatchScore }}/100</p>
+                
+                <p class="muted">--- Section Breakdown ---</p>
+                <p><span>Experience:</span> {{ atsScoreResult.sectionScores.experience }}/100</p>
+                <p><span>Projects:</span> {{ atsScoreResult.sectionScores.projects }}/100</p>
+                <p><span>Education:</span> {{ atsScoreResult.sectionScores.education }}/100</p>
+                <p><span>Skills:</span> {{ atsScoreResult.sectionScores.skills }}/100</p>
+                <p><span>Formatting:</span> {{ atsScoreResult.sectionScores.formatting }}/100</p>
+
+                <p class="muted">--- Strong Keywords ---</p>
+                <p class="keyword-list">{{ atsScoreResult.strongKeywords.join(', ') }}</p>
+
+                <p class="muted">--- Missing Keywords ---</p>
+                <p class="keyword-list missing">{{ atsScoreResult.missingKeywords.join(', ') }}</p>
+
+                <p class="muted">--- Top Recommendations ---</p>
+                <ng-container *ngFor="let rec of atsScoreResult.recommendations.slice(0, 3)">
+                  <p><span>[{{ rec.priority.toUpperCase() }}]</span> {{ rec.category }}: {{ rec.reason }}</p>
+                  <p class="action-line">&gt; {{ rec.action }}</p>
+                </ng-container>
+
+                <p class="muted">--- Summary ---</p>
+                <p class="summary-line">{{ atsScoreResult.summary }}</p>
+              </ng-container>
+
+              <!-- Idle/initial state -->
+              <ng-container *ngIf="!atsScoreResult && !atsScoringError && !atsScoring">
+                <p>Waiting for analysis...</p>
+                <p class="muted">Complete Steps 2-3 and click Next to analyze your resume.</p>
+              </ng-container>
+
+              <!-- Loading spinner state -->
+              <ng-container *ngIf="atsScoring">
+                <p class="muted">Analyzing resume...</p>
+                <p class="loading-spinner">⟳ Scoring against job description...</p>
+              </ng-container>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <footer class="wizard-actions">
+      <button type="button" class="secondary" *ngIf="currentStep < 4" [disabled]="currentStep === 1" (click)="previousStep()">
+        Back
+      </button>
+
+      <button type="button" class="primary" *ngIf="currentStep < 4" [disabled]="!canProceedFromStep(currentStep)" (click)="nextStep()">
+        Next
+      </button>
+    </footer>
+  </section>
+</section>

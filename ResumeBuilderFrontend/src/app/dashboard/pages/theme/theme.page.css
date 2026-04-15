@@ -1,0 +1,45 @@
+.feature-page {
+  display: grid;
+  gap: 16px;
+}
+
+header h1 {
+  margin: 0;
+  color: #102f32;
+}
+
+header p {
+  margin: 8px 0 0;
+  color: #567073;
+}
+
+.ai-placeholder {
+  border: 1px solid rgba(15, 118, 110, 0.26);
+  border-radius: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.ai-placeholder h2 {
+  margin: 0;
+  color: #1b4649;
+}
+
+.ai-placeholder p {
+  margin: 10px 0 14px;
+  color: #577073;
+}
+
+.mock-console {
+  border-radius: 12px;
+  padding: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  background: #0e2f31;
+  color: #d8fffa;
+}
+
+.theme-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}

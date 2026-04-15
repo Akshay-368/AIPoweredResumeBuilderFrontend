@@ -1,0 +1,72 @@
+
+<!-- LEGACY AUTH LAYOUT COMMENTED OUT PER REQUEST: Kept for reference and rollback safety. -->
+<!-- <div class="auth-page"> -->
+<!--     <div class = "left-panel"> -->
+<!--         <h1 class="title">Resume Builder</h1> -->
+<!--         <p class="tagline">Create your resume in minutes with our easy-to-use builder. Choose from a variety of templates and customize your resume to stand out to employers.</p> -->
+<!--         <div class="features"> -->
+<!--             <p> - Secure authentication </p> -->
+<!--             <p> - User-friendly interface </p> -->
+<!--             <p> - Customizable templates </p> -->
+<!--             <p> - Save and export your resume </p> -->
+<!--         </div> -->
+<!--     </div> -->
+<!--     <div class="right-panel"> -->
+<!--         <div class="auth-form"> -->
+<!--             <div class="tabs"> -->
+<!--                 LEGACY NOTE: Prior tab-button approach using dynamic class binding. -->
+<!--                 <button [class.active]="activeTab==='login'" (click)="switchTab('login')">Login</button> -->
+<!--                 <button [class.active] ="activeTab === 'register'" (click) = "switchTab('register')">Registration</button> -->
+<!--             </div> -->
+<!--             <div class = "form-area"> -->
+<!--                 <app-login *ngIf="activeTab==='login'"></app-login> -->
+<!--                 <app-register *ngIf="activeTab==='register'"></app-register> -->
+<!--             </div> -->
+<!--         </div> -->
+<!-- </div> -->
+
+<!-- New premium auth shell: clearer hierarchy and stronger visual brand direction. -->
+<div class="auth-page">
+    <div class="left-panel">
+        <p class="eyebrow">AI-Powered Career Suite</p>
+        <h1 class="title">Build A Resume That Opens Doors</h1>
+        <p class="tagline">
+            Craft modern resumes quickly with smart guidance, polished templates, and secure account access.
+        </p>
+
+        <!-- Value proposition list to improve trust and feature discoverability. -->
+        <div class="feature-grid">
+            <div class="feature-item">Secure authentication</div>
+            <div class="feature-item">Guided profile completion</div>
+            <div class="feature-item">ATS-friendly templates</div>
+            <div class="feature-item">One-click export workflow</div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="auth-form">
+            <!-- Tab switch controls login vs registration panel. -->
+            <div class="tabs" *ngIf="!isForgotPasswordFlowActive">
+                <button type="button" [class.active]="activeTab === 'login'" (click)="switchTab('login')">
+                    Login
+                </button>
+                <button type="button" [class.active]="activeTab === 'register'" (click)="switchTab('register')">
+                    Registration
+                </button>
+            </div>
+
+            <!-- Angular structural rendering keeps only one form mounted at a time. -->
+            <div class="form-area">
+                <app-login
+                    *ngIf="activeTab === 'login'"
+                    (forgotPasswordFlowActiveChange)="onForgotPasswordFlowActiveChange($event)"
+                    (forgotPasswordFlowCompleted)="onForgotPasswordFlowCompleted()"
+                ></app-login>
+                <app-register *ngIf="activeTab === 'register'" (registerSuccess)="switchTab('login')"></app-register>
+            </div>
+
+            <!-- Temporary button just to do a quick test run for the switchTab logic in register. -->
+           <!--<button type="button" (click)="switchTab('login')">Test Login</button> -->
+        </div>
+    </div>
+</div>

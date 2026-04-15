@@ -1,0 +1,42 @@
+<section class="rate-us-page">
+  <header class="page-header">
+    <h1>Rate Us</h1>
+    <p>Share a score out of 10 and your feedback to improve ResumeAI.</p>
+  </header>
+
+  <section class="card" *ngIf="!isAdmin">
+    <h2>Submit Rating</h2>
+
+    <label for="rating">Rating (1-10)</label>
+    <input id="rating" type="number" [(ngModel)]="rating" min="1" max="10" />
+
+    <label for="feedback">Feedback</label>
+    <textarea id="feedback" rows="5" [(ngModel)]="feedbackText" placeholder="Tell us what worked and what should improve"></textarea>
+
+    <button type="button" class="primary" (click)="submit()">Submit Feedback</button>
+  </section>
+
+  <section class="card" *ngIf="isAdmin">
+    <h2>Admin View</h2>
+    <p>Admins can review feedback but cannot submit new ratings from this flow.</p>
+  </section>
+
+  <p class="status" *ngIf="message">{{ message }}</p>
+
+  <section class="card">
+    <div class="list-head">
+      <h2>Feedback Records</h2>
+      <button type="button" class="secondary" (click)="reload()" [disabled]="loading">Refresh</button>
+    </div>
+
+    <p *ngIf="feedback.length === 0">No feedback available yet.</p>
+
+    <article class="entry" *ngFor="let item of feedback">
+      <div class="entry-head">
+        <strong>Rating: {{ item.rating }}/10</strong>
+        <span>User: {{ item.userId }} | {{ item.createdAt | date:'medium' }}</span>
+      </div>
+      <p>{{ item.feedbackText }}</p>
+    </article>
+  </section>
+</section>

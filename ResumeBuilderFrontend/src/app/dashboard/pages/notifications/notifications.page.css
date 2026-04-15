@@ -1,0 +1,96 @@
+.notifications-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.composer-card,
+.list-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.6rem;
+}
+
+button {
+  border: 0;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  cursor: pointer;
+}
+
+button.primary {
+  background: #0f766e;
+  color: #fff;
+}
+
+button.secondary {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+button.danger {
+  background: #b91c1c;
+  color: #fff;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.tabs button.active {
+  background: #111827;
+  color: #fff;
+}
+
+.note {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-top: 0.65rem;
+}
+
+.note-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.meta,
+.meta-row {
+  color: #4b5563;
+  font-size: 0.86rem;
+}
+
+.meta-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.status {
+  color: #b91c1c;
+}

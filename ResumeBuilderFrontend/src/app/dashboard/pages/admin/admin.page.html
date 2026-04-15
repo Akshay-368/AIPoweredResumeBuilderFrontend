@@ -1,0 +1,67 @@
+<section class="admin-page">
+  <header class="page-header">
+    <h1>Admin Dashboard</h1>
+    <p>Operational overview, user lifecycle actions, and activity context.</p>
+  </header>
+
+  <p class="status" *ngIf="message">{{ message }}</p>
+
+  <section class="overview" *ngIf="overview">
+    <article class="metric">
+      <h3>Total Users</h3>
+      <p>{{ overview.totalUsers }}</p>
+    </article>
+    <article class="metric">
+      <h3>Active Users</h3>
+      <p>{{ overview.activeUsers }}</p>
+    </article>
+    <article class="metric">
+      <h3>Admins</h3>
+      <p>{{ overview.totalAdmins }}</p>
+    </article>
+    <article class="metric" *ngIf="overview.atsContext as ats">
+      <h3>Total Projects</h3>
+      <p>{{ ats.totalProjects ?? 0 }}</p>
+    </article>
+  </section>
+
+  <section class="users-card">
+    <div class="head-row">
+      <h2>Users</h2>
+      <button type="button" class="secondary" (click)="reload()" [disabled]="loading">Refresh</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>UserId</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.userId }}</td>
+            <td>{{ user.fullName }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.isActive ? 'Active' : 'Inactive' }}</td>
+            <td>
+              <button type="button" class="secondary" (click)="loadActivity(user.userId)">Activity</button>
+              <button type="button" class="danger" (click)="deleteUser(user.userId)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="activity" *ngIf="selectedUserActivity">
+    <h2>User Activity ({{ selectedUserId }})</h2>
+    <pre>{{ selectedUserActivity | json }}</pre>
+  </section>
+</section>

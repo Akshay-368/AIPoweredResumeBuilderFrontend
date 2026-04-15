@@ -1,0 +1,203 @@
+/* LEGACY LOGIN CSS COMMENTED OUT PER REQUEST: kept for reference and rollback safety.
+input{
+    border:1px solid #cbd5e1;
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:6px;
+}
+
+button{
+    background:#1e3a8a;
+    width:100%;
+    padding:12px;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.helper{
+    color:#64748b;
+    margin-top:15px;
+    font-size:14px;
+    text-align:center;
+}
+*/
+
+/* Premium form wrapper for visual hierarchy in the auth card. */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.section-title {
+    margin: 0;
+    font-size: 1.45rem;
+    color: #143336;
+}
+
+.section-subtitle {
+    margin: 0 0 10px;
+    font-size: 0.95rem;
+    color: #607071;
+}
+
+/* Segmented method selector: more accessible than tiny radio targets. */
+.login-method {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 2px;
+}
+
+.method-btn {
+    border: 1px solid #adc9c6;
+    background: #eff7f6;
+    color: #315a5d;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.method-btn:hover {
+    background: #e0efed;
+}
+
+.method-btn.active {
+    background: linear-gradient(135deg, #0f766e, #0b4f4a);
+    border-color: #0f766e;
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(15, 118, 110, 0.26);
+}
+
+/* Shared field style for consistency and readability. */
+input {
+    border: 1px solid #bfd1cf;
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 0.96rem;
+    color: #1f292b;
+    background: #fbfefd;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #0f766e;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+
+button {
+    background: linear-gradient(135deg, #0f766e, #0b4f4a);
+    width: 100%;
+    padding: 12px;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    margin-top: 6px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(11, 79, 74, 0.24);
+}
+
+button:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.25);
+    opacity: 0.65;
+}
+
+.helper {
+    color: #5f6c70;
+    margin-top: 10px;
+    font-size: 0.86rem;
+    text-align: center;
+}
+
+.forgot-link-wrap {
+    margin: -2px 0 0;
+}
+
+.forgot-link {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #0f766e;
+    font-size: 0.84rem;
+    text-decoration: underline;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+.forgot-panel {
+    margin-top: 8px;
+    border-top: 1px dashed rgba(15, 118, 110, 0.25);
+    padding-top: 12px;
+    display: grid;
+    gap: 8px;
+}
+
+.forgot-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.forgot-title {
+    margin: 0;
+    font-weight: 700;
+    color: #1a4a4c;
+}
+
+.forgot-close {
+    width: auto;
+    margin: 0;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+    background: rgba(15, 118, 110, 0.1);
+    color: #145458;
+    border: 1px solid rgba(15, 118, 110, 0.25);
+    box-shadow: none;
+}
+
+.forgot-otp-block,
+.forgot-reset-block {
+    display: grid;
+    gap: 8px;
+}
+
+.otp-timer {
+    margin: 0;
+    color: #15585a;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.password-rules p {
+    margin: 2px 0;
+    font-size: 0.76rem;
+}
+
+.forgot-message {
+    margin: 0;
+    color: #c92a2a;
+    font-size: 12px;
+}
+
+.field-error {
+    margin: 0;
+    color: #c92a2a;
+    font-size: 12px;
+}

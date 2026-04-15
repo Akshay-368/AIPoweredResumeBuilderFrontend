@@ -1,0 +1,230 @@
+.feature-page {
+  display: grid;
+  gap: 18px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+header h1 {
+  margin: 0;
+  color: #102f32;
+}
+
+header p {
+  margin: 8px 0 0;
+  color: #567073;
+}
+
+.user-id-chip {
+  border: 1px solid rgba(15, 118, 110, 0.3);
+  background: rgba(15, 118, 110, 0.08);
+  color: #0f5e58;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.card {
+  border: 1px solid rgba(15, 118, 110, 0.26);
+  border-radius: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  display: grid;
+  gap: 12px;
+}
+
+.card h2 {
+  margin: 0;
+  color: #1b4649;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-group button,
+.actions button,
+.row-actions button {
+  border-radius: 10px;
+  border: 1px solid rgba(15, 118, 110, 0.3);
+  padding: 7px 11px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #134446;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filter-group button.active {
+  background: #0f766e;
+  color: #fff;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid rgba(15, 118, 110, 0.14);
+  font-size: 0.9rem;
+}
+
+th {
+  color: #194b4e;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.secondary {
+  border-color: rgba(15, 118, 110, 0.3);
+}
+
+.danger {
+  border-color: rgba(172, 56, 56, 0.35);
+  color: #9f2f2f;
+}
+
+.primary {
+  border-color: #0f766e;
+  background: #0f766e;
+  color: #fff;
+}
+
+.pill {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  background: rgba(15, 118, 110, 0.12);
+  color: #0f5e58;
+}
+
+.pill.deleted {
+  background: rgba(185, 28, 28, 0.12);
+  color: #991b1b;
+}
+
+.pill.default {
+  background: rgba(21, 128, 61, 0.14);
+  color: #166534;
+}
+
+.empty {
+  color: #5f7678;
+  border: 1px dashed rgba(15, 118, 110, 0.22);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.security-card label {
+  font-weight: 700;
+  color: #19484a;
+}
+
+.security-card input {
+  width: 100%;
+  border: 1px solid rgba(15, 118, 110, 0.26);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.hint {
+  margin: 0;
+  color: #597173;
+  font-size: 0.9rem;
+}
+
+.profile-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 14px;
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  border-radius: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.profile-meta p {
+  margin: 0;
+  color: #244f52;
+  font-size: 0.86rem;
+}
+
+.otp-block {
+  display: grid;
+  gap: 8px;
+}
+
+.otp-timer {
+  margin: 0;
+  color: #15585a;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.password-rules p {
+  margin: 2px 0;
+  font-size: 0.78rem;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.status {
+  margin: 0;
+  color: #1f595c;
+  font-size: 0.9rem;
+}
+
+.danger-zone {
+  border-color: rgba(180, 60, 60, 0.28);
+}
+
+@media (max-width: 980px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .grid-two {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-meta {
+    grid-template-columns: 1fr;
+  }
+}

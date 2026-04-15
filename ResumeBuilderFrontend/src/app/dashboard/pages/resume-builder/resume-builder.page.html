@@ -1,0 +1,387 @@
+<section class="resume-builder-page">
+  <header class="page-header">
+    <h1>Resume Builder Flow</h1>
+    <p>Build your resume step-by-step with guided inputs and polished workflow controls.</p>
+  </header>
+
+  <ol class="stepper" aria-label="Resume Builder wizard steps">
+    <li
+      *ngFor="let label of stepLabels; let index = index"
+      class="step-item"
+      [class.active]="isStepActive(index + 1)"
+      [class.completed]="isStepCompleted(index + 1)"
+    >
+      <span class="step-index">{{ index + 1 }}</span>
+      <span class="step-label">{{ label }}</span>
+    </li>
+  </ol>
+
+  <section class="wizard-card" [formGroup]="resumeForm">
+    <div class="slides-window">
+      <div class="slides-track" [style.transform]="'translateX(-' + slideOffsetPercent + '%)'">
+        <article class="wizard-step" aria-label="Basic information" formGroupName="basicInfo">
+          <h2>Step 1: Basic Information</h2>
+          <p>Start with your core profile details.</p>
+
+          <label class="toggle">
+            <input
+              type="checkbox"
+              [checked]="useDefaultResume"
+              (change)="onUseDefaultResumeToggle($event)"
+              [disabled]="!defaultResumeAvailable"
+            />
+            <span>Use my default resume and skip to template selection</span>
+          </label>
+          <small class="hint" *ngIf="!defaultResumeAvailable">No default resume configured. Use Account Settings to set one.</small>
+          <small class="hint" *ngIf="defaultResumeMessage">{{ defaultResumeMessage }}</small>
+
+          <label for="fullName">Full Name *</label>
+          <input id="fullName" type="text" formControlName="fullName" placeholder="e.g. Alex Johnson" />
+          <small class="error" *ngIf="basicInfoGroup.controls.fullName.touched && basicInfoGroup.controls.fullName.invalid">
+            Full name is required.
+          </small>
+
+          <label for="professionalRole">Professional Role / Title *</label>
+          <input
+            id="professionalRole"
+            type="text"
+            formControlName="professionalRole"
+            placeholder="e.g. Senior Frontend Developer"
+          />
+          <small
+            class="error"
+            *ngIf="basicInfoGroup.controls.professionalRole.touched && basicInfoGroup.controls.professionalRole.invalid"
+          >
+            Professional role is required.
+          </small>
+
+          <label for="email">Email *</label>
+          <input id="email" type="email" formControlName="email" placeholder="you@example.com" />
+          <small class="error" *ngIf="basicInfoGroup.controls.email.touched && basicInfoGroup.controls.email.invalid">
+            Enter a valid email address.
+          </small>
+
+          <div class="grid-two">
+            <div>
+              <label for="phone">Phone Number</label>
+              <input id="phone" type="text" formControlName="phone" placeholder="+91 9876543210" />
+            </div>
+
+            <div>
+              <label for="location">Location</label>
+              <input id="location" type="text" formControlName="location" placeholder="City, Country" />
+            </div>
+          </div>
+
+          <label for="linkedInUrl">LinkedIn URL</label>
+          <input id="linkedInUrl" type="text" formControlName="linkedInUrl" placeholder="https://linkedin.com/in/username" />
+
+          <label for="portfolioUrl">GitHub / Portfolio URL</label>
+          <input id="portfolioUrl" type="text" formControlName="portfolioUrl" placeholder="https://github.com/username" />
+
+          <label for="summary">Short Professional Summary</label>
+          <textarea id="summary" rows="5" formControlName="summary" placeholder="2-4 lines about your profile and impact"></textarea>
+        </article>
+
+        <article class="wizard-step" aria-label="Target job" formGroupName="targetJob">
+          <h2>Step 2: Target Job</h2>
+          <p>Select role context or provide job description details.</p>
+
+          <label for="targetRole">Target Role</label>
+          <select id="targetRole" formControlName="role">
+            <option value="" selected>Select a role</option>
+            <option *ngFor="let role of commonJobRoles" [value]="role">{{ role }}</option>
+          </select>
+
+          <div class="other-role" *ngIf="isOtherRoleSelected">
+            <label for="customRole">Custom Role *</label>
+            <input id="customRole" type="text" formControlName="customRole" placeholder="Type your custom role" />
+            <small class="error" *ngIf="targetJobGroup.controls.customRole.touched && targetJobGroup.controls.customRole.invalid">
+              Custom role is required when Other is selected.
+            </small>
+          </div>
+
+          <div class="upload-box">
+            <button type="button" class="secondary" (click)="openJobDescriptionFilePicker()">Upload Job Description</button>
+            <input
+              #jobDescriptionFileInput
+              type="file"
+              accept=".pdf,.docx"
+              (change)="onJobDescriptionFileChange($event)"
+              hidden
+            />
+            <span *ngIf="jobDescriptionFileName" class="file-name">Selected: {{ jobDescriptionFileName }}</span>
+            <small class="error" *ngIf="jobDescriptionFileError">{{ jobDescriptionFileError }}</small>
+            <small class="hint" *ngIf="jobDescriptionUploadState === 'parsing'">{{ jobDescriptionUploadMessage }}</small>
+            <small class="hint" *ngIf="jobDescriptionUploadState === 'parsed'">{{ jobDescriptionUploadMessage }}</small>
+          </div>
+
+          <label for="jobDescriptionText">Alternative: Paste Job Description</label>
+          <textarea
+            id="jobDescriptionText"
+            rows="8"
+            formControlName="jobDescriptionText"
+            placeholder="Paste JD details here..."
+          ></textarea>
+          <small class="hint">Continue with role selection, uploaded JD, or pasted JD text.</small>
+          <small class="error" *ngIf="hasStepError(2)">
+            Provide at least one valid source: role, uploaded JD file, or pasted JD text.
+          </small>
+        </article>
+
+        <article class="wizard-step" aria-label="Education" formArrayName="education">
+          <h2>Step 3: Education</h2>
+          <p>Add your academic background. At least one valid entry is required.</p>
+
+          <div class="list-stack">
+            <section class="entry-card" *ngFor="let educationGroup of educationControls; let index = index" [formGroupName]="index">
+              <div class="entry-head">
+                <h3>Education {{ index + 1 }}</h3>
+                <button type="button" class="ghost danger" *ngIf="educationControls.length > 1" (click)="removeEducation(index)">
+                  Remove
+                </button>
+              </div>
+
+              <label [for]="'institution-' + index">Institution Name *</label>
+              <input [id]="'institution-' + index" type="text" formControlName="institution" placeholder="University / College" />
+
+              <label [for]="'degree-' + index">Degree *</label>
+              <input [id]="'degree-' + index" type="text" formControlName="degree" placeholder="B.Tech, M.Sc, MBA" />
+
+              <label [for]="'field-' + index">Field of Study</label>
+              <input [id]="'field-' + index" type="text" formControlName="fieldOfStudy" placeholder="Computer Science" />
+
+              <div class="grid-two">
+                <div>
+                  <label [for]="'startYear-' + index">Start Year</label>
+                  <input [id]="'startYear-' + index" type="text" formControlName="startYear" placeholder="2019" />
+                </div>
+                <div>
+                  <label [for]="'endYear-' + index">End Year</label>
+                  <input
+                    [id]="'endYear-' + index"
+                    type="text"
+                    formControlName="endYear"
+                    placeholder="2023"
+                    [readonly]="educationGroup.get('isPresent')?.value"
+                  />
+                </div>
+              </div>
+
+              <label class="toggle">
+                <input type="checkbox" formControlName="isPresent" />
+                <span>Present</span>
+              </label>
+
+              <label [for]="'marks-' + index">Marks / CGPA</label>
+              <input [id]="'marks-' + index" type="text" formControlName="marks" placeholder="8.8 CGPA / 82%" />
+            </section>
+          </div>
+
+          <button type="button" class="secondary" (click)="addEducation()">Add More Education</button>
+          <small class="error" *ngIf="hasStepError(3)">
+            Add at least one education entry with institution name and degree.
+          </small>
+        </article>
+
+        <article class="wizard-step" aria-label="Experience" formArrayName="experience">
+          <h2>Step 4: Experience (Optional)</h2>
+          <p>Skip this step if you have no prior experience.</p>
+
+          <label class="toggle">
+            <input type="checkbox" [checked]="noPriorExperience" (change)="onNoPriorExperienceChange($event)" />
+            <span>No prior experience</span>
+          </label>
+
+          <div class="list-stack" *ngIf="!noPriorExperience">
+            <section class="entry-card" *ngFor="let experienceGroup of experienceControls; let index = index" [formGroupName]="index">
+              <div class="entry-head">
+                <h3>Experience {{ index + 1 }}</h3>
+                <button type="button" class="ghost danger" *ngIf="experienceControls.length > 1" (click)="removeExperience(index)">
+                  Remove
+                </button>
+              </div>
+
+              <label [for]="'company-' + index">Company Name *</label>
+              <input [id]="'company-' + index" type="text" formControlName="company" placeholder="Company name" />
+
+              <label [for]="'expRole-' + index">Role *</label>
+              <input [id]="'expRole-' + index" type="text" formControlName="role" placeholder="Your role" />
+
+              <div class="grid-two">
+                <div>
+                  <label [for]="'startDate-' + index">Start Date</label>
+                  <input [id]="'startDate-' + index" type="month" formControlName="startDate" />
+                </div>
+                <div>
+                  <label [for]="'endDate-' + index">End Date</label>
+                  <input
+                    [id]="'endDate-' + index"
+                    type="month"
+                    formControlName="endDate"
+                    [readonly]="experienceGroup.get('isPresent')?.value"
+                  />
+                </div>
+              </div>
+
+              <label class="toggle">
+                <input type="checkbox" formControlName="isPresent" />
+                <span>Present</span>
+              </label>
+
+              <label [for]="'expDescription-' + index">Description</label>
+              <textarea [id]="'expDescription-' + index" rows="4" formControlName="description" placeholder="Impact, responsibilities, outcomes"></textarea>
+            </section>
+          </div>
+
+          <button type="button" class="secondary" *ngIf="!noPriorExperience" (click)="addExperience()">Add More Experience</button>
+          <small class="error" *ngIf="hasStepError(4)">
+            Add at least one valid experience entry with company and role, or select no prior experience.
+          </small>
+        </article>
+
+        <article class="wizard-step" aria-label="Projects" formArrayName="projects">
+          <h2>Step 5: Projects</h2>
+          <p>Highlight projects with your tech stack and measurable outcomes.</p>
+
+          <div class="list-stack">
+            <section class="entry-card" *ngFor="let projectGroup of projectControls; let index = index" [formGroupName]="index">
+              <div class="entry-head">
+                <h3>Project {{ index + 1 }}</h3>
+                <button type="button" class="ghost danger" *ngIf="projectControls.length > 1" (click)="removeProject(index)">
+                  Remove
+                </button>
+              </div>
+
+              <label [for]="'projectName-' + index">Project Name *</label>
+              <input [id]="'projectName-' + index" type="text" formControlName="name" placeholder="Project title" />
+
+              <label [for]="'projectStack-' + index">Tech Stack / Tools *</label>
+              <input [id]="'projectStack-' + index" type="text" formControlName="techStack" placeholder="Angular, Node.js, PostgreSQL" />
+
+              <label [for]="'projectDescription-' + index">Description / Achievement *</label>
+              <textarea
+                [id]="'projectDescription-' + index"
+                rows="5"
+                formControlName="description"
+                placeholder="Describe impact, metrics, and what you built"
+              ></textarea>
+            </section>
+          </div>
+
+          <button type="button" class="secondary" (click)="addProject()">Add More Project</button>
+          <small class="error" *ngIf="hasStepError(5)">
+            Complete at least one project with name, tech stack, and description.
+          </small>
+        </article>
+
+        <article class="wizard-step" aria-label="Template selection">
+          <h2>Step 6: Template Selection (Optional)</h2>
+          <p>Select a template now or keep the default layout.</p>
+
+          <div class="template-grid">
+            <button
+              type="button"
+              class="template-card"
+              *ngFor="let template of availableTemplates"
+              [class.selected]="selectedTemplateId === template.id"
+              (click)="selectTemplate(template.id)"
+            >
+              <h3>{{ template.title }}</h3>
+              <p>{{ template.description }}</p>
+              <span class="chip" *ngIf="selectedTemplateId === template.id">Selected</span>
+            </button>
+          </div>
+
+          <small class="hint">Default template: Deedy - One Page Two Column Resume.</small>
+        </article>
+
+        <article class="wizard-step final-step" aria-label="Final resume editor">
+          <h2>Step 7: Final Resume Editor</h2>
+          <p>Generate a canonical resume preview, review an in-app PDF rendering, request edits, and export when finalized.</p>
+
+          <section class="preview-panel">
+            <div class="panel-header">
+              <h3>Resume Preview</h3>
+              <span class="status-pill" [class.ready]="resumePreviewState === 'ready'" [class.loading]="resumePreviewState === 'generating'" [class.error]="resumePreviewState === 'error'">
+                {{ resumePreviewState }}
+              </span>
+            </div>
+
+            <p><strong>Name:</strong> {{ basicInfoGroup.controls.fullName.value || 'Not provided' }}</p>
+            <p><strong>Role:</strong> {{ basicInfoGroup.controls.professionalRole.value || 'Not provided' }}</p>
+            <p><strong>Email:</strong> {{ basicInfoGroup.controls.email.value || 'Not provided' }}</p>
+            <p><strong>Template:</strong> {{ selectedTemplate.title }}</p>
+            <p><strong>Preview Updated:</strong> {{ resumePreviewUpdatedAt || 'Not yet generated' }}</p>
+
+            <div class="pdf-preview-shell">
+              <div class="pdf-state" *ngIf="previewPdfState === 'generating'">Rendering PDF preview...</div>
+              <div class="pdf-state error" *ngIf="previewPdfState === 'error'">{{ previewPdfError }}</div>
+
+              <iframe
+                *ngIf="previewPdfState === 'ready' && previewPdfResourceUrl"
+                [src]="previewPdfResourceUrl"
+                class="pdf-preview-frame"
+                title="Resume PDF Preview"
+              ></iframe>
+
+              <div class="mock-console" *ngIf="previewPdfState === 'idle'">
+                Generate a preview to see the embedded PDF rendering.
+              </div>
+            </div>
+
+            <details class="json-debug" [open]="showPreviewJsonDebug">
+              <summary>Inspect Canonical JSON (Debug)</summary>
+              <pre class="resume-json" *ngIf="resumePreviewJson; else previewJsonEmpty">{{ resumePreviewJson }}</pre>
+              <ng-template #previewJsonEmpty>
+                <div class="mock-console">No canonical JSON generated yet.</div>
+              </ng-template>
+            </details>
+          </section>
+
+          <section class="ai-panel">
+            <h3>Revision Request</h3>
+            <textarea
+              rows="5"
+              formControlName="revisionRequest"
+              placeholder="Example: shorten the summary, emphasize Angular and backend work, and make the projects section more concise."
+            ></textarea>
+            <small class="hint">Send revision instructions with the current preview JSON back to Gemini.</small>
+            <small class="error" *ngIf="resumePreviewError">{{ resumePreviewError }}</small>
+          </section>
+
+          <div class="final-actions">
+            <button type="button" class="secondary" (click)="saveResume()">Generate Preview</button>
+            <button type="button" class="secondary" (click)="requestRevision()">Request Revision</button>
+            <button type="button" class="primary" (click)="exportResume()">Finalize & Export PDF</button>
+          </div>
+
+          <p class="action-message" *ngIf="actionMessage">{{ actionMessage }}</p>
+          <p class="action-message error" *ngIf="pdfExportError">{{ pdfExportError }}</p>
+          <p class="action-message" *ngIf="pdfExportFileName">Last exported PDF: {{ pdfExportFileName }}</p>
+        </article>
+      </div>
+    </div>
+
+    <footer class="wizard-actions">
+      <button
+        type="button"
+        class="secondary"
+        *ngIf="currentStep > 1 && currentStep < totalSteps"
+        (click)="previousStep()"
+      >
+        Back
+      </button>
+
+      <button
+        type="button"
+        class="primary"
+        *ngIf="currentStep < totalSteps"
+        [disabled]="!canProceedFromStep(currentStep)"
+        (click)="nextStep()"
+      >
+        Next
+      </button>
+    </footer>
+  </section>
+</section>

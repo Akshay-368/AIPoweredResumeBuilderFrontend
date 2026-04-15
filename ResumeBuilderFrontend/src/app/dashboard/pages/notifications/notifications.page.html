@@ -1,0 +1,78 @@
+<section class="notifications-page">
+  <header class="page-header">
+    <h1>Notifications</h1>
+    <p>Send and track message-style notifications between users and admins.</p>
+  </header>
+
+  <section class="composer-card">
+    <h2>Compose</h2>
+
+    <label for="toUserId">To (User Id)</label>
+    <select id="toUserId" [(ngModel)]="toUserId">
+      <option value="" disabled>Select recipient user id</option>
+      <option *ngFor="let user of recipientUsers" [value]="user.userId">
+        {{ user.userId }}{{ (user.role || '').toUpperCase() === 'ADMIN' ? ' (ADMIN)' : '' }}
+      </option>
+    </select>
+    <p class="meta" *ngIf="recipientUsers.length === 0">No users available in directory.</p>
+
+    <label for="subject">Subject</label>
+    <input id="subject" type="text" [(ngModel)]="subject" placeholder="Notification subject" />
+
+    <label for="body">Body</label>
+    <textarea id="body" rows="5" [(ngModel)]="body" placeholder="Write your message..."></textarea>
+
+    <button type="button" class="primary" (click)="send()">Send Notification</button>
+  </section>
+
+  <p class="status" *ngIf="message">{{ message }}</p>
+
+  <section class="tabs">
+    <button type="button" [class.active]="activeTab === 'inbox'" (click)="activeTab = 'inbox'">Inbox</button>
+    <button type="button" [class.active]="activeTab === 'sent'" (click)="activeTab = 'sent'">Sent</button>
+    <button type="button" class="secondary" (click)="reload()" [disabled]="loading">Refresh</button>
+  </section>
+
+  <section class="list-card" *ngIf="activeTab === 'inbox'">
+    <h2>Inbox</h2>
+    <p *ngIf="inbox.length === 0">No inbox notifications.</p>
+
+    <article class="note" *ngFor="let item of inbox">
+      <div class="note-head">
+        <strong>{{ item.subject }}</strong>
+        <span class="meta">From {{ getUserLabel(item.fromUserId) }} | {{ item.createdAt | date:'medium' }}</span>
+      </div>
+      <p>{{ item.body }}</p>
+      <div class="meta-row">
+        <span>Read: {{ item.isRead ? 'Yes' : 'No' }}</span>
+        <span>Recipient Read: {{ item.recipientRead ? 'Yes' : 'No' }}</span>
+      </div>
+      <div class="actions">
+        <button type="button" class="secondary" (click)="markRead(item)" *ngIf="!item.isRead">Mark Read</button>
+        <button type="button" class="secondary" (click)="softDelete(item)">Delete From My View</button>
+        <button type="button" class="danger" (click)="hardDelete(item)" *ngIf="isAdmin">Hard Delete</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="list-card" *ngIf="activeTab === 'sent'">
+    <h2>Sent</h2>
+    <p *ngIf="sent.length === 0">No sent notifications.</p>
+
+    <article class="note" *ngFor="let item of sent">
+      <div class="note-head">
+        <strong>{{ item.subject }}</strong>
+        <span class="meta">To {{ getUserLabel(item.toUserId) }} | {{ item.createdAt | date:'medium' }}</span>
+      </div>
+      <p>{{ item.body }}</p>
+      <div class="meta-row">
+        <span>Recipient Read: {{ item.recipientRead ? 'Yes' : 'No' }}</span>
+        <span *ngIf="item.recipientReadAt">Read At: {{ item.recipientReadAt | date:'short' }}</span>
+      </div>
+      <div class="actions">
+        <button type="button" class="secondary" (click)="softDelete(item)">Delete From My View</button>
+        <button type="button" class="danger" (click)="hardDelete(item)" *ngIf="isAdmin">Hard Delete</button>
+      </div>
+    </article>
+  </section>
+</section>

@@ -1,0 +1,138 @@
+
+<!-- LEGACY LOGIN MARKUP COMMENTED OUT : kept for reference and rollback safety. -->
+<!-- <div class="login-form"> -->
+<!--     <div class="login-method"> -->
+<!--         <label> -->
+<!--             <input type="radio" name = "loginMethod" value="email" [(ngModel)]="loginMethod"> Email -->
+<!--         </label> -->
+<!--         <label> -->
+<!--         <input type="radio" name = "loginMethod" value="phone" [(ngModel)]="loginMethod"> Phone </label> -->
+<!--     </div> -->
+<!--     <input *ngIf="loginMethod==='email'" placeholder="Email" type="email" [(ngModel)]="email" name="email" required> -->
+<!--     <input *ngIf="loginMethod==='phone'" placeholder="Phone Number" type="tel" pattern="[0-9]{10}" [(ngModel)]="phone" name="phone" required> -->
+<!--     <input placeholder="Password" type="password" [(ngModel)]="password" name="password" required> -->
+<!--     <button [disabled]="!isValidLogin()">Login </button> -->
+<!-- </div> -->
+
+<!-- New login form: premium segmented chooser improves discoverability for email vs phone login. -->
+<div class="login-form">
+    <p class="section-title">Welcome Back</p>
+    <p class="section-subtitle">Choose a login method and continue to your dashboard.</p>
+
+    <!-- Button-based segmented control is easier to tap/click than tiny radios. -->
+    <div class="login-method" role="tablist" aria-label="Login method selection">
+        <button
+            type="button"
+            class="method-btn"
+            [class.active]="loginMethod === 'email'"
+            (click)="setLoginMethod('email')"
+        >
+            Email Address
+        </button>
+        <button
+            type="button"
+            class="method-btn"
+            [class.active]="loginMethod === 'phone'"
+            (click)="setLoginMethod('phone')"
+        >
+            Phone Number
+        </button>
+    </div>
+
+    <!-- Conditional inputs render only for the selected method. -->
+    <input
+        *ngIf="loginMethod === 'email'"
+        placeholder="name@example.com"
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        required
+    >
+
+    <p *ngIf="loginMethod === 'email' && emailErrorMessage" style="color: #c92a2a; font-size: 12px; margin-top: 6px;">
+        {{ emailErrorMessage }}
+    </p>
+
+    <input
+        *ngIf="loginMethod === 'phone'"
+        placeholder="10-digit phone number"
+        type="tel"
+        pattern="[0-9]{10}"
+        [(ngModel)]="phone"
+        name="phone"
+        required
+    >
+
+    <p *ngIf="loginMethod === 'phone' && phoneErrorMessage" style="color: #c92a2a; font-size: 12px; margin-top: 6px;">
+        {{ phoneErrorMessage }}
+    </p>
+
+    <!-- Password is shared by both login methods. -->
+    <input placeholder="Password" type="password" [(ngModel)]="password" name="password" required>
+
+    <p class="forgot-link-wrap" *ngIf="!isForgotPasswordPanelOpen">
+        <button type="button" class="forgot-link" (click)="openForgotPasswordPanel()">Forgot password?</button>
+    </p>
+
+    <!-- Disabled state prevents invalid submissions. -->
+    <button type="button" [disabled]="!isValidLogin() || isSubmitting" (click)="onLogin()">
+        {{ isSubmitting ? 'Logging in...' : 'Login' }}
+    </button>
+
+    <p style="margin: 12px 0 6px; font-size: 12px; color: #6b7280; text-align: center;">or continue with</p>
+    <div #googleLoginButtonHost style="display: flex; justify-content: center; margin-bottom: 10px;"></div>
+    <p *ngIf="isGoogleSubmitting" style="font-size: 12px; text-align: center; color: #6b7280;">Signing in with Google...</p>
+
+    <section class="forgot-panel" *ngIf="isForgotPasswordPanelOpen">
+        <div class="forgot-head">
+            <p class="forgot-title">Reset Password</p>
+            <button type="button" class="forgot-close" (click)="closeForgotPasswordPanel()">Close</button>
+        </div>
+
+        <input
+            placeholder="Registered email"
+            type="email"
+            [(ngModel)]="forgotEmail"
+            name="forgotEmail"
+        >
+
+        <button type="button" (click)="requestForgotPasswordOtp()">Request OTP</button>
+
+        <div *ngIf="forgotOtpRequested" class="forgot-otp-block">
+            <p class="otp-timer">OTP expires in: {{ otpCountdownText || '10:00' }}</p>
+            <input placeholder="OTP" type="text" maxlength="6" [(ngModel)]="forgotOtp" name="forgotOtp">
+            <button type="button" (click)="verifyForgotPasswordOtp()">Verify OTP</button>
+
+            <div *ngIf="forgotOtpVerified" class="forgot-reset-block">
+                <input
+                    placeholder="New password"
+                    type="password"
+                    [(ngModel)]="forgotNewPassword"
+                    name="forgotNewPassword"
+                    (ngModelChange)="validateForgotPassword()"
+                >
+
+                <p class="field-error" *ngIf="forgotNewPasswordError">{{ forgotNewPasswordError }}</p>
+
+                <div class="password-rules">
+                    <p [style.color]="forgotPasswordRules.hasUpper ? 'green' : 'red'">✔ Uppercase letter</p>
+                    <p [style.color]="forgotPasswordRules.hasLower ? 'green' : 'red'">✔ Lowercase letter</p>
+                    <p [style.color]="forgotPasswordRules.hasNumber ? 'green' : 'red'">✔ Number</p>
+                    <p [style.color]="forgotPasswordRules.hasSpecial ? 'green' : 'red'">✔ Special character (@$!%*?&)</p>
+                    <p [style.color]="forgotPasswordRules.hasMinLength ? 'green' : 'red'">✔ Minimum 8 characters</p>
+                </div>
+
+                <input placeholder="Confirm new password" type="password" [(ngModel)]="forgotConfirmPassword" name="forgotConfirmPassword">
+
+                <p *ngIf="forgotConfirmPassword">
+                    <span *ngIf="passwordsMatchForReset()" style="color: green">✔ Passwords match</span>
+                    <span *ngIf="!passwordsMatchForReset()" style="color: red">❌ Passwords do not match</span>
+                </p>
+
+                <button type="button" (click)="resetForgotPassword()">Reset Password</button>
+            </div>
+        </div>
+
+        <p *ngIf="forgotMessage" class="forgot-message">{{ forgotMessage }}</p>
+    </section>
+</div>
