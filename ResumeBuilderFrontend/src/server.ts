@@ -26,6 +26,7 @@ app.use('/api', createProxyMiddleware({
   target: gatewayTarget,
   changeOrigin: true,
   secure: false,
+  pathRewrite: (path) => `/api${path}`,
 }));
 
 /**
