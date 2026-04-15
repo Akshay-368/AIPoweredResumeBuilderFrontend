@@ -1,0 +1,21 @@
+# Node dependencies and caches
+node_modules
+npm-debug.log*
+
+# Build outputs
+.angular
+dist
+
+# VCS and editor files
+.git
+.gitignore
+.vscode
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docs / local helpers not needed in image
+*.md
+*.http
+*_post.json
