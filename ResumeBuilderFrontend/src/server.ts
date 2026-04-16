@@ -19,6 +19,18 @@ app.get('/healthz', (_req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
+// Temporary test for reaching gateway.
+app.get('/test-gateway', async (req, res) => {
+  try {
+    const response = await fetch(`${gatewayTarget}/api/auth/health`);
+    const text = await response.text();
+    res.send(text);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Gateway unreachable');
+  }
+});
+
 /**
  * Proxy API traffic through Gateway so frontend never calls downstream services directly.
  */
