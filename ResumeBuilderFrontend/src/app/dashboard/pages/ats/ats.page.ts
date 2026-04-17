@@ -52,6 +52,7 @@ export class AtsPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly maxFileSizeBytes = 5 * 1024 * 1024 ; // 5 MB
   private isHydratingProject = false;
 
   @ViewChild('resumeFileInput') resumeFileInput?: ElementRef<HTMLInputElement>;
@@ -200,6 +201,16 @@ export class AtsPage implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  private validateFile(file : File) : string | null {
+    if (!this.isSupportedFile(file.name)){
+      return 'Unsupported file type. Please upload PDF or DOCX only.';
+    }
+    if (file.size > this.maxFileSizeBytes){
+      return 'File size exceeds the maximum allowed size of 5 MB.';
+    }
+    return null;
+  }
+
   openResumeFilePicker(): void {
     if (this.hasLockedResumeArtifact) {
       return;
@@ -253,10 +264,20 @@ export class AtsPage implements OnInit, OnDestroy {
 
     const fileInput = event.target as HTMLInputElement;
     const selectedFile = fileInput.files?.[0];
+    const validationError = selectedFile ? this.validateFile(selectedFile) : null;
+    if (validationError){
+      this.resumeFileName = '';
+      this.resumeFileError = validationError;
+      fileInput.value ='';
+      this.persistState();
+      return;
+    }
 
     if (!selectedFile) {
       return;
     }
+
+    /* The file validation is now handled in the validateFile method which checks both file type and size. If the file is invalid, it sets the appropriate error message and prevents further processing.
 
     if (!this.isSupportedFile(selectedFile.name)) {
       this.resumeFileName = '';
@@ -265,6 +286,7 @@ export class AtsPage implements OnInit, OnDestroy {
       this.persistState();
       return;
     }
+    */
 
     this.resumeFileName = selectedFile.name;
     this.resumeFileError = '';
@@ -339,11 +361,21 @@ export class AtsPage implements OnInit, OnDestroy {
 
     const fileInput = event.target as HTMLInputElement;
     const selectedFile = fileInput.files?.[0];
+    const validationError = selectedFile ? this.validateFile(selectedFile) : null;
+    if (validationError){
+      this.jobDescriptionFileName = '';
+      this.jobDescriptionFileError = validationError;
+      fileInput.value = '';
+      this.persistState();
+      return;
+    }
 
     if (!selectedFile) {
       return;
     }
 
+
+    /* This is no longer needed as the validateFile method now handles both file type and size validation. If the file is invalid, it sets the appropriate error message and prevents further processing.
     if (!this.isSupportedFile(selectedFile.name)) {
       this.jobDescriptionFileName = '';
       this.jobDescriptionFileError = 'Unsupported file type. Please upload PDF or DOCX only.';
@@ -351,6 +383,7 @@ export class AtsPage implements OnInit, OnDestroy {
       this.persistState();
       return;
     }
+    */
 
     this.jobDescriptionFileName = selectedFile.name;
     this.jobDescriptionFileError = '';
